@@ -1,0 +1,79 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block title %}Thông tin giao hàng{%endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="col-12">
+    <h1 class="h2">Thông tin giao hàng</h1>
+  </div>
+  <div class="col-12">
+<!--    <p>Cập nhật thông tin giao hàng</p>-->
+  </div>
+  <hr />
+</div>
+
+
+<div class="container">
+  <div class="row g-3">
+    {% if addresses|length == 0 %}
+    <div class="col-12">There are no delivery addresses, <a href="{% url 'account:add_address' %}">Thêm Thông tin giao hàng</a></div>
+    {% else %}
+    <div class="col-md-4 col-lg-4 order-md-last p-0 order-3">
+    
+<div class="d-flex bd-highlight ms-0">
+  <div class="p-2 flex-grow-1 bd-highlight">Tổng tiền hàng:</div>
+  <div class="p-2 bd-highlight"><span class="fw-bold h5">$</span><span id="sub_total"class="fw-bold h5">{{basket.get_subtotal_price}}</span></div>
+</div>
+<div class="d-flex bd-highlight">
+  <div class="p-2 flex-grow-1 bd-highlight">Phí vận chuyển:</div>
+  <div class="p-2 bd-highlight"><span class="fw-bold h5">$</span><span id="delivery_price" class="fw-bold h5">{{basket.get_delivery_price}}</span></div>
+</div>
+<div class="d-flex bd-highlight">
+  <div class="p-2 flex-grow-1 bd-highlight">Tổng số tiền:</div>
+  <div class="p-2 bd-highlight"><span class="fw-bold h5">$</span><span id="total"class="fw-bold h5">{{basket.get_total_price}}</span></div>
+</div>
+<a role="button" href="{% url 'checkout:payment_selection' %}" class="btn btn-success fw-bold w-100" type="button">Thanh toán</a>
+</div>
+    
+    <div class="col-md-7 col-lg-8">
+      {% for address in addresses %}
+      {% if not address.default %}
+      <div class="col-12"><a href="{% url 'account:add_address' %}">Thêm Thông tin giao hàng</a></div>
+      {% endif %}
+      <div class="card mb-3 border-1 rounded-0 product-item me-md-4" data-index="{{option.id}}">
+        <div class="row g-0">
+          <div class="col">
+            <div class="card pb-3 rounded-0">
+              <div class="card-header bg-white small text-muted">
+                {% if address.default %}
+                Đang chọn
+                {% endif %}
+                &nbsp;
+              </div>
+              <div class="card-body small pb-1">
+                <p class="card-text m-0">Tên: {{address.full_name}}</p>
+                <p class="card-text m-0">Địa chỉ: {{address.address_line}} - {{address.address_line2}} - {{address.town_city}}</p>
+<!--                <p class="card-text m-0">{{address.postcode}}</p>-->
+                <p class="card-text m-0">Số điện thoại: {{address.phone}}</p>
+                <div class="pt-5">
+                  <a href="{% url 'account:edit_address' address.id %}" class="text-decoration-none">Chỉnh sửa</a>
+                  {% if not address.default %}
+                  | <a href="{% url 'account:set_default' address.id %}" class="text-decoration-none">Chọn</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {% endfor %}
+      <div class="col-12"><a href="{% url 'account:add_address' %}">Thêm Thông tin giao hàng</a></div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
