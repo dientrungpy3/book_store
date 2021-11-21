@@ -1,9 +1,10 @@
 from decimal import Decimal
 
 from checkout.models import DeliveryOptions
+from account.models import Address
 from django.conf import settings
 from store.models import Product
-
+import json
 
 class Basket:
     """
@@ -108,3 +109,24 @@ class Basket:
 
     def save(self):
         self.session.modified = True
+
+
+    def get_shipping_customer_name(self):
+        address_id = self.session["address"]["address_id"]
+        address = Address.objects.filter(id=address_id)[0]
+
+        return address.full_name
+
+    def get_shipping_address(self):
+        address_id = self.session["address"]["address_id"]
+        address = Address.objects.filter(id=address_id)[0]
+
+        shipping_address = {
+            'address_line_1': address.address_line,
+            'address_line_2': address.address_line2,
+            'admin_area_2': address.town_city,
+            'postal_code': address.postcode,
+            'country_code': 'VN',
+        }
+
+        return shipping_address

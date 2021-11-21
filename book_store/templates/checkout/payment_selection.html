@@ -38,7 +38,7 @@
   </div>
 </div>
 <script
-  src="https://www.paypal.com/sdk/js?client-id=AXh8m1Y-nMI2tniu6qPIHzF9lTzof_hc-QeLcp2ibW0S_uWjTkc8FAeHjtrrYjeFBKY5e0NamSkNkE0R&currency=GBP"
+  src="https://www.paypal.com/sdk/js?client-id=AXh8m1Y-nMI2tniu6qPIHzF9lTzof_hc-QeLcp2ibW0S_uWjTkc8FAeHjtrrYjeFBKY5e0NamSkNkE0R&currency=USD"
   data-sdk-integration-source="button-factory">
 </script>
     <script>
@@ -67,18 +67,36 @@
         color: 'gold',
         layout: 'vertical',
         label: 'paypal',
-
       },
     createOrder: function (data, actions) {
         return actions.order.create({
-          purchase_units: [{
-            "amount": {
-              "currency_code": "USD",
-              "value": '{{basket.get_total_price}}'
+          application_context: {
+          brand_name: 'myBrand',
+          locale: 'us-US',
+          shipping_preference: 'SET_PROVIDED_ADDRESS',
+        },
+
+        purchase_units: [{
+          amount: {
+            value: '{{basket.get_total_price}}',
+            currency_code: "USD",
+          },
+
+          shipping: {
+            name: {
+              full_name: '{{basket.get_shipping_customer_name}}'
+            },
+            address: {
+              address_line_1: '{{basket.get_shipping_address.address_line_1}}',
+              admin_area_2: '{{basket.get_shipping_address.address_line_2}}',
+              postal_code: '{{basket.get_shipping_address.postal_code}}',
+              country_code: 'VN',
             }
-          }]
-        });
-      },
+          }
+        }]
+      });
+    },
+
     onApprove: function (data) {
         var url = "{% url 'checkout:payment_complete' %}"
         return fetch(url, {
